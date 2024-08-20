@@ -22,6 +22,7 @@ class VanillaDatatable {
 
         let table_container = document.createElement('div')
         table_container.classList.add('datatable-overflow-x-auto')
+        table_container.appendChild(table)
 
         div_datatable.appendChild(table_container)
 
