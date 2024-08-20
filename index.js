@@ -19,6 +19,7 @@ class VanillaDatatable {
         div_datatable.appendChild(search_field)
 
         let table = document.createElement('table')
+        table.classList.add('datatable_table')
 
         let table_container = document.createElement('div')
         table_container.classList.add('datatable_table_container')
