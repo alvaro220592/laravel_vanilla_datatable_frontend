@@ -1,5 +1,6 @@
-.datatable-overflow-x-auto {
+.datatable_table_container {
 	overflow-x: auto;
+	padding: 5px;
 }
 
 td, th {
