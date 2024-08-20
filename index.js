@@ -87,8 +87,6 @@ class VanillaDatatable {
         const token = document.querySelector('meta[name="csrf-token"]').content
         let search = null
 
-        console.log(document.getElementById('search_field'));
-
         if (document.getElementById('search_field')) {
             search = document.getElementById('search_field').value
         }
