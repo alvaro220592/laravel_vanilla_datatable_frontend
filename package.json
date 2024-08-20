@@ -1,0 +1,27 @@
+{
+  "name": "laravel_vanilla_datatable",
+  "version": "1.0.0",
+  "description": "Recursos frontend para a construção de datatables no Laravel",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alvaro220592/laravel_vanilla_datatable_frontend.git"
+  },
+  "keywords": [
+    "laravel",
+    "vanilla",
+    "datatable",
+    "alvaro220592",
+    "css",
+    "js"
+  ],
+  "author": "alvaro220592",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alvaro220592/laravel_vanilla_datatable_frontend/issues"
+  },
+  "homepage": "https://github.com/alvaro220592/laravel_vanilla_datatable_frontend#readme"
+}
