@@ -11,4 +11,5 @@
 .datatable_td, .datatable_th {
 	border: solid 1px grey;
 	white-space: nowrap;
+	padding: 2px 5px;
 }
