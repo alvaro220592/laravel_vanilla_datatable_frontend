@@ -40,6 +40,7 @@ class VanillaDatatable {
 
         Object.keys(this.columns).forEach(col => {
             let th = document.createElement('th')
+            th.classList.add('datatable_th')
             th.innerText = col
             thead_tr.appendChild(th)
         })
@@ -55,6 +56,7 @@ class VanillaDatatable {
 
             Object.keys(columns).forEach(column => {
                 let td = document.createElement('td')
+                th.classList.add('datatable_td')
                 td.innerText = row[column]
                 tr.appendChild(td)
             })

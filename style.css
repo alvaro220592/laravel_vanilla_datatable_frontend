@@ -3,7 +3,12 @@
 	padding: 5px;
 }
 
-td, th {
+.datatable_table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.datatable_td, .datatable_th {
 	border: solid 1px grey;
 	white-space: nowrap;
 }
