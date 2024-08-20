@@ -1,3 +1,7 @@
 table {
 	background-color: '#5e5bcf' !important;
 }
+
+td, th {
+	border: solid 1px grey;
+}
