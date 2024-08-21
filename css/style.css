@@ -1,6 +1,6 @@
 .datatable_table_container {
 	overflow-x: auto;
-	padding: 5px;
+	padding: 5px 0px;
 }
 
 .datatable_table {
@@ -12,4 +12,19 @@
 	border: solid 1px grey;
 	white-space: nowrap;
 	padding: 2px 5px;
+}
+
+.datatable_header {
+    display: flex;
+    justify-content: space-between;
+}
+
+#pagination_container {
+    display: flex;
+    gap: 3px;
+    justify-content: end;
+}
+
+.invisible {
+    display: none;
 }
