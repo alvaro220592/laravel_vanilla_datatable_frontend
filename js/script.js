@@ -1,11 +1,14 @@
 class VanillaDatatable {
-    constructor({ url, datatable_id, columns, per_page, searchable, pagination }) {
+    constructor({ url, datatable_id, columns, per_page, searchable, pagination, sorting }) {
         this.url = url;
         this.datatable_id = datatable_id;
         this.columns = columns; // Espera um objeto com alias e exibição
         this.per_page = per_page
         this.searchable = searchable
         this.pagination = pagination
+        this.sorting = sorting
+        this.sort_direction = null
+        this.sort_colum = null
     }
 
     async init() {
@@ -46,10 +49,51 @@ class VanillaDatatable {
 
         table.appendChild(tbody)
 
-        Object.keys(this.columns).forEach(col => {
+        this.columns.forEach(col => {
             let th = document.createElement('th')
             th.classList.add('datatable_th')
-            th.innerText = col
+            th.innerHTML = col.label
+            th.dataset.column_name = col.name
+
+            if (col.sortable == true) {
+                let sorting_btn = document.createElement('button')
+                sorting_btn.classList.add('sorting_btn')
+                sorting_btn.innerHTML = this.sorting.types.default.label
+                sorting_btn.dataset.sort_direction = 'asc'
+
+                sorting_btn.addEventListener('click', (event) => {
+
+                    document.querySelectorAll('.sorting_btn').forEach(item => {
+                        if (item !== event.currentTarget) {
+                            item.innerHTML = this.sorting.types.default.label
+                        }
+                    })
+
+                    if(this.sort_direction == null){
+                        this.sort_direction = 'asc'
+                        sorting_btn.innerHTML = this.sorting.types.asc.label
+                    }
+                    else if(this.sort_direction == 'asc'){
+                        this.sort_direction = 'desc'
+                        sorting_btn.innerHTML = this.sorting.types.desc.label
+                    }
+                    else if(this.sort_direction == 'desc'){
+                        this.sort_direction = null
+                        sorting_btn.innerHTML = this.sorting.types.default.label
+                    }
+
+                    // definindo a coluna para ordenação
+                    if (this.sort_direction != null) {
+                        this.sort_colum = sorting_btn.closest('th').dataset.column_name
+                    } else {
+                        this.sort_colum = null
+                    }
+
+                    this.search(this.url);
+                })
+
+                th.appendChild(sorting_btn)
+            }
             thead_tr.appendChild(th)
         })
 
@@ -58,6 +102,7 @@ class VanillaDatatable {
 
     render_per_page (datatable_header) {
         let per_page_container = document.createElement('div')
+        per_page_container.setAttribute('id', 'per_page_container')
         let per_page_field = document.createElement('select')
         per_page_field.setAttribute('id', 'per_page_field')
         let per_page_options_values = this.per_page.options_values
@@ -81,7 +126,7 @@ class VanillaDatatable {
         })
 
         let per_page_text = document.createElement('span')
-        per_page_text.innerHTML = '<span>Resultados por página</span> '
+        per_page_text.innerHTML = `<span>${this.per_page.label}</span>`
         per_page_container.appendChild(per_page_text)
         per_page_container.appendChild(per_page_field)
 
@@ -90,6 +135,7 @@ class VanillaDatatable {
 
     render_search(datatable_header){
         let search_field_container = document.createElement('div')
+        search_field_container.setAttribute('id', 'search_field_container')
 
         if (this.searchable.label && this.searchable.label != '') {
             let search_field_label = document.createElement('label')
@@ -110,33 +156,19 @@ class VanillaDatatable {
         datatable_header.appendChild(search_field_container)
     }
 
-    async render(data, links, columns) {
+    render_pagination(links, total){
+        let per_page = document.getElementById('per_page_field').value
 
-        document.querySelector('tbody').innerHTML = ''
-        data.forEach(row => {
-            let tr = document.createElement('tr')
-
-            Object.keys(columns).forEach(column => {
-                let td = document.createElement('td')
-                td.classList.add('datatable_td')
-                td.innerText = row[column]
-                tr.appendChild(td)
-            })
-            document.querySelector('tbody').appendChild(tr)
-        })
-
-        if (!document.getElementById('pagination_container')) {
-            let pagination_container = document.createElement('div')
-            pagination_container.setAttribute('id', 'pagination_container')
-            document.getElementById('datatable').appendChild(pagination_container)
+        if (this.pagination.showing_x_of_y.visible == true) {
+            let showing_x_of_y_container = document.createElement('div')
+            showing_x_of_y_container.innerHTML = this.pagination.showing_x_of_y.label.replace('{perpage}', per_page).replace('{total}', total)
+            document.getElementById('pagination_container').appendChild(showing_x_of_y_container)
         }
-
-        document.getElementById('pagination_container').innerHTML = ''
 
         links.forEach(link => {
             let pagination_btn = document.createElement('button')
 
-            if (this.pagination.theme == 'minimal') {
+            if (this.pagination.buttons.type == 'minimal') {
                 if (!(link.label.includes('Previous') || link.label.includes('Next'))) {
                     return
                 }
@@ -150,7 +182,12 @@ class VanillaDatatable {
                 link.label = this.pagination.buttons.previous.label
             }
 
+            if (link.active) {
+                pagination_btn.classList.add('pagination_btn_active')
+            }
+
             pagination_btn.innerHTML = link.label
+            pagination_btn.classList.add('pagination_btn')
 
             if (!link.url) {
                 pagination_btn.disabled = true
@@ -166,6 +203,32 @@ class VanillaDatatable {
 
             document.getElementById('pagination_container').appendChild(pagination_btn)
         })
+    }
+
+    async render(data, links, columns, total) {
+
+        document.querySelector('tbody').innerHTML = ''
+        data.forEach(row => {
+            let tr = document.createElement('tr')
+
+            columns.forEach(column => {
+                let td = document.createElement('td')
+                td.classList.add('datatable_td')
+                td.innerText = row[column.name]
+                tr.appendChild(td)
+            })
+            document.querySelector('tbody').appendChild(tr)
+        })
+
+        if (!document.getElementById('pagination_container')) {
+            let pagination_container = document.createElement('div')
+            pagination_container.setAttribute('id', 'pagination_container')
+            document.getElementById('datatable').appendChild(pagination_container)
+        }
+
+        document.getElementById('pagination_container').innerHTML = ''
+
+        this.render_pagination(links, total)
 
         document.getElementById(this.datatable_id).appendChild(pagination_container)
     }
@@ -174,6 +237,8 @@ class VanillaDatatable {
         const token = document.querySelector('meta[name="csrf-token"]').content
         let search = null
         let per_page = null
+        let sort_column = this.sort_colum
+        let sort_direction = this.sort_direction
 
         if (document.getElementById('search_field')) {
             search = document.getElementById('search_field').value
@@ -191,11 +256,13 @@ class VanillaDatatable {
             },
             body: JSON.stringify({
                 search: search,
-                per_page: per_page
+                per_page: per_page,
+                sort_direction: sort_direction,
+                sort_column: sort_column,
             })
         })
         const res = await req.json()
 
-        this.render(res.data, res.links, this.columns)
+        this.render(res.data, res.links, this.columns, res.total)
     }
 }
