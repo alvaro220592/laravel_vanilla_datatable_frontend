@@ -212,7 +212,7 @@ class VanillaDatatable {
         })
     }
 
-    async render(data, links, columns, total) {
+    async render_data(data, links, columns, total) {
 
         document.querySelector('tbody').innerHTML = ''
         data.forEach(row => {
@@ -221,8 +221,28 @@ class VanillaDatatable {
             columns.forEach(column => {
 
                 let td = document.createElement('td')
+
+                let value = ''
+
+                if (column.type == 'data') {
+                    if (column.format) {
+                        value = column.format(row[column.name])
+                    } else {
+                        value = row[column.name]
+                    }
+                }
+
+                if (column.type == 'actions') {
+                    value = '<div style="display: flex; justify-content: space-evenly;">'
+                    column.actions.forEach(action => {
+                        value += `<span onclick="${action.function}(${row.id})" style="cursor: pointer; color: ${action.color}">${action.label}</span>`; // não tem tratamento para colocar svg defaut,pois é obrigatório que se defina qual é o ícone
+                    })
+                    value += '</div>'
+                }
+
                 td.classList.add('datatable_td')
-                td.innerText = column.format ? column.format(row[column.name]) : row[column.name]
+                td.style.textAlign = column.align
+                td.innerHTML = value
                 tr.appendChild(td)
             })
             document.querySelector('tbody').appendChild(tr)
@@ -271,7 +291,7 @@ class VanillaDatatable {
         })
         const res = await req.json()
 
-        this.render(res.data, res.links, this.columns, res.total)
+        this.render_data(res.data, res.links, this.columns, res.total)
     }
 
     svg(){
