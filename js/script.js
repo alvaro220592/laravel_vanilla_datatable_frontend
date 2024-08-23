@@ -56,48 +56,52 @@ class VanillaDatatable {
             th.dataset.column_name = col.name
 
             if (col.sortable == true) {
-                let sorting_btn = document.createElement('button')
-                sorting_btn.classList.add('sorting_btn')
-                sorting_btn.innerHTML = this.sorting.types.default.label
-                sorting_btn.dataset.sort_direction = 'asc'
-
-                sorting_btn.addEventListener('click', (event) => {
-
-                    document.querySelectorAll('.sorting_btn').forEach(item => {
-                        if (item !== event.currentTarget) {
-                            item.innerHTML = this.sorting.types.default.label
-                        }
-                    })
-
-                    if(this.sort_direction == null){
-                        this.sort_direction = 'asc'
-                        sorting_btn.innerHTML = this.sorting.types.asc.label
-                    }
-                    else if(this.sort_direction == 'asc'){
-                        this.sort_direction = 'desc'
-                        sorting_btn.innerHTML = this.sorting.types.desc.label
-                    }
-                    else if(this.sort_direction == 'desc'){
-                        this.sort_direction = null
-                        sorting_btn.innerHTML = this.sorting.types.default.label
-                    }
-
-                    // definindo a coluna para ordenação
-                    if (this.sort_direction != null) {
-                        this.sort_colum = sorting_btn.closest('th').dataset.column_name
-                    } else {
-                        this.sort_colum = null
-                    }
-
-                    this.search(this.url);
-                })
-
-                th.appendChild(sorting_btn)
+                this.render_sort_button(th)
             }
             thead_tr.appendChild(th)
         })
 
         await this.search(this.url)
+    }
+
+    render_sort_button(th){
+        let sorting_btn = document.createElement('button')
+        sorting_btn.classList.add('sorting_btn')
+        sorting_btn.innerHTML = this.sorting.types.default.label
+        sorting_btn.dataset.sort_direction = 'asc'
+
+        sorting_btn.addEventListener('click', (event) => {
+
+            document.querySelectorAll('.sorting_btn').forEach(item => {
+                if (item !== event.currentTarget) {
+                    item.innerHTML = this.sorting.types.default.label
+                }
+            })
+
+            if(this.sort_direction == null){
+                this.sort_direction = 'asc'
+                sorting_btn.innerHTML = this.sorting.types.asc.label
+            }
+            else if(this.sort_direction == 'asc'){
+                this.sort_direction = 'desc'
+                sorting_btn.innerHTML = this.sorting.types.desc.label
+            }
+            else if(this.sort_direction == 'desc'){
+                this.sort_direction = null
+                sorting_btn.innerHTML = this.sorting.types.default.label
+            }
+
+            // definindo a coluna para ordenação
+            if (this.sort_direction != null) {
+                this.sort_colum = sorting_btn.closest('th').dataset.column_name
+            } else {
+                this.sort_colum = null
+            }
+
+            this.search(this.url);
+        })
+
+        th.appendChild(sorting_btn)
     }
 
     render_per_page (datatable_header) {
